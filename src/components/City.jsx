@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function cityInput({onCityChange}){
+function CityInput({onCityChange}){
     const [cityInput, setCityInput] = useState('');
 
     const handleSubmit = (e) => {
