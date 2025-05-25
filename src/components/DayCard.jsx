@@ -1,9 +1,10 @@
 import React from 'react'
+import './DayCard.css'
 
 function DayCard({day}){
 
     const { date, weather, icon, high, low } = day;
-    const weekday = new Date(day.date).toLocaleDateString("en-us",{weekday: "long"});
+    const weekday = new Date(date).toLocaleDateString("en-us",{weekday: "long"});
 
 return (
     <div className='weatherCard'>
@@ -19,3 +20,5 @@ return (
     </div>
 );
 }
+
+export default DayCard;
