@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 
 function CityInput({onCityChange}){
-    const [cityInput, setCityInput] = useState('');
+    const [inputValue, setInputValue] = useState('');
 
     const handleSubmit = (e) => {
+        
         e.preventDefault();
-        if(cityInput.trim()){
-            onCityChange(cityInput.trim())
-            setCityInput('');
+        if(inputValue.trim()){
+            onCityChange(inputValue.trim())
+            setInputValue('');
         }
     };
 
@@ -16,10 +17,12 @@ function CityInput({onCityChange}){
             <input
             type='text'
             placeholder='Enter a City'
-            value={cityInput}
-            onChange={(e) => setCityInput(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
         />
         <button type='submit'>Search</button>
         </form>
     );
 }
+
+export default CityInput;
