@@ -9,13 +9,17 @@ function LocationInput({OnLocationChange}){
     
     const [depart, setDepart] = useState('')
     const [arrive, setArrive] = useState('')
-    const [suggestions, setSuggestions] = useState('')
+    const [suggestions, setSuggestions] = useState([])
     const [activeField, setActiveField] = useState('')
     const [query, setQuery] = useState('')
     
     
     useEffect(() => {
         if(!query){
+            setSuggestions([]);
+            return;
+        }
+        if(query.length < 3) {
             setSuggestions([]);
             return;
         }
@@ -29,8 +33,8 @@ function LocationInput({OnLocationChange}){
         });
 
         }, 300);
-        return clearTimeout(debounceTimeout);
-}, [query]);
+        return () => clearTimeout(debounceTimeout);
+}, [query, API_KEY]);
 
 const handleInputChange = (field, value) => {
     setActiveField(field);
@@ -76,9 +80,9 @@ const handleSuggestionClick = (fullAddress) => {
                     {suggestions.map( s => (
                         <li 
                         key={s.id}
-                        onClick={() => handleSuggestionClick(s.address.freeFormAddress)}
+                        onClick={() => handleSuggestionClick(s.address.freeformAddress)}
                         >
-                            {s.address.freeFormAddress}
+                            {s.address.freeformAddress}
                         </li>
                     ))}
                 </ul>
@@ -96,9 +100,9 @@ const handleSuggestionClick = (fullAddress) => {
                     {suggestions.map( s => (
                         <li 
                         key={s.id}
-                        onClick={() => handleSuggestionClick(s.address.freeFormAddress)}
+                        onClick={() => handleSuggestionClick(s.address.freeformAddress)}
                         >
-                            {s.address.freeFormAddress}
+                            {s.address.freeformAddress}
                         </li>
                     ))}
                 </ul>
@@ -106,6 +110,7 @@ const handleSuggestionClick = (fullAddress) => {
             </div>
             <button type='submit'>Enter</button>
         </form>
-    )
+    );
 
 }
+export default LocationInput;
