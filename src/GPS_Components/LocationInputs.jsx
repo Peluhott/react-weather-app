@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-let debounceTimeout;
+let debounceTimeout; // fix this don't forget
 
 
 function LocationInput({OnLocationChange}){
@@ -9,6 +9,8 @@ function LocationInput({OnLocationChange}){
     
     const [depart, setDepart] = useState('')
     const [arrive, setArrive] = useState('')
+    const [departureDate, setDepartureDate] = useState('')
+    const [departureTime, setDepartureTime] = useState('')
     const [suggestions, setSuggestions] = useState([])
     const [activeField, setActiveField] = useState('')
     const [query, setQuery] = useState('')
@@ -45,7 +47,7 @@ const handleInputChange = (field, value) => {
     else setArrive(value);
 };
 
-const handleSuggestionClick = (fullAddress) => {
+const handleSuggestionClick = (fullAddress) => { //fix this because i updated it to full object sincei need lat and lon
     if(activeField === 'depart') setDepart(fullAddress);
     else setArrive(fullAddress);
 
@@ -62,7 +64,7 @@ const handleSuggestionClick = (fullAddress) => {
             return;
         }
        
-        OnLocationChange(depart, arrive);
+        OnLocationChange(depart, arrive, departureDate, departureTime);
     }
 
 
@@ -80,7 +82,7 @@ const handleSuggestionClick = (fullAddress) => {
                     {suggestions.map( s => (
                         <li 
                         key={s.id}
-                        onClick={() => handleSuggestionClick(s.address.freeformAddress)}
+                        onClick={() => handleSuggestionClick(s)}
                         >
                             {s.address.freeformAddress}
                         </li>
@@ -100,7 +102,7 @@ const handleSuggestionClick = (fullAddress) => {
                     {suggestions.map( s => (
                         <li 
                         key={s.id}
-                        onClick={() => handleSuggestionClick(s.address.freeformAddress)}
+                        onClick={() => handleSuggestionClick(s)}
                         >
                             {s.address.freeformAddress}
                         </li>
@@ -108,6 +110,20 @@ const handleSuggestionClick = (fullAddress) => {
                 </ul>
             )}
             </div>
+
+            <input 
+            type='date'
+            placeholder='Enter date'
+            value={departureDate}
+            onChange={(e) => setDepartureDate(e.target.value)}
+            />
+
+            <input
+            type='time'
+            placeholder='Enter time'
+            value={departureTime}
+            onChange={(e) => setDepartureTime(e.target.value)}
+            />
             <button type='submit'>Enter</button>
         </form>
     );
