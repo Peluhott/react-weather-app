@@ -1,24 +1,25 @@
-import React,  {useState, useEffect} from 'react'
+import React,  { useEffect } from 'react'
 
 
-const route = //departure:arrival
-const depart = location //latitude,longitude
-const arrive = location //latitude,longitude
-const departureDate =  //YYYY-MM-DDTHH:MM:SS
+//departure:arrival
+//latitude,longitude
+//latitude,longitude
+//YYYY-MM-DDTHH:MM:SS
 
 const GPS_KEY = import.meta.env.VITE_LOCATION_KEY;
 
 function FetchGPS({location, routeInfo}){
-    const [arrive, depart] = location
+    const [depart, arrive,departureDate, departureTime] = location
     const latLonFormatted = `${depart.lat},${depart.lon}:${arrive.lat},${arrive.lon}`
+    const timeFormatted = `${departureDate}T${departureTime}:00`
 
     useEffect(() => {
         const fetchRoute = async () => {
-            if(!depart || !arrive || departureDate){
+            if(!depart || !arrive || !departureDate){
                 return;
             }
             try {
-                const response = await fetch(`https://api.tomtom.com/routing/1/calculateRoute/${encodeURIComponent(latLonFormatted)}/json?computeTravelTimeFor=all&departAt=${encodeURIComponent(departureDate)}&key=${GPS_KEY}`);
+                const response = await fetch(`https://api.tomtom.com/routing/1/calculateRoute/${encodeURIComponent(latLonFormatted)}/json?computeTravelTimeFor=all&departAt=${encodeURIComponent(timeFormatted)}&key=${GPS_KEY}`);
                 const data = await response.json();
                 routeInfo(data)
             } catch (error) {
@@ -28,6 +29,6 @@ function FetchGPS({location, routeInfo}){
             
         }
         fetchRoute();
-    },[location,departureDate,]);
+    },[location,departureDate,departureTime]);
     return null;
 }

@@ -47,9 +47,9 @@ const handleInputChange = (field, value) => {
     else setArrive(value);
 };
 
-const handleSuggestionClick = (fullAddress) => { //fix this because i updated it to full object sincei need lat and lon
-    if(activeField === 'depart') setDepart(fullAddress);
-    else setArrive(fullAddress);
+const handleSuggestionClick = (s) => {
+    if(activeField === 'depart') setDepart(s.freeformAddress);
+    else setArrive(s.freeformAddress);
 
     setSuggestions([]);
     setQuery('')
@@ -64,7 +64,7 @@ const handleSuggestionClick = (fullAddress) => { //fix this because i updated it
             return;
         }
        
-        OnLocationChange(depart, arrive, departureDate, departureTime);
+        OnLocationChange({depart, arrive, departureDate, departureTime});
     }
 
 
