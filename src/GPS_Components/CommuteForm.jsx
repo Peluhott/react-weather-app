@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
-
-let debounceTimeout; // fix this don't forget
+import React, { useState, useEffect, useRef } from 'react' // change this whole class into a CommuteForm
 
 
-function LocationInput({OnLocationChange}){
+
+
+
+function CommuteForm({OnCommuteSubmit}){
+    const debounceTimeoutRef = useRef(null)
     const API_KEY = import.meta.env.VITE_LOCATION_KEY;
     
     
@@ -11,9 +13,12 @@ function LocationInput({OnLocationChange}){
     const [arrive, setArrive] = useState('')
     const [departureDate, setDepartureDate] = useState('')
     const [departureTime, setDepartureTime] = useState('')
+    const [selectedDays, setSelectedDays] = useState([])
     const [suggestions, setSuggestions] = useState([])
     const [activeField, setActiveField] = useState('')
     const [query, setQuery] = useState('')
+
+    const weekdays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
     
     
     useEffect(() => {
@@ -26,8 +31,8 @@ function LocationInput({OnLocationChange}){
             return;
         }
 
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
+        clearTimeout(debounceTimeoutRef.current);
+        debounceTimeoutRef.current = setTimeout(() => {
             fetch(`https://api.tomtom.com/search/2/search/${encodeURIComponent(query)}.json?key=${API_KEY}&limit=5`)
         .then((res) => res.json())
         .then((data) => {
@@ -35,7 +40,7 @@ function LocationInput({OnLocationChange}){
         });
 
         }, 300);
-        return () => clearTimeout(debounceTimeout);
+        return () => clearTimeout(debounceTimeoutRef.current);
 }, [query, API_KEY]);
 
 const handleInputChange = (field, value) => {
@@ -48,23 +53,28 @@ const handleInputChange = (field, value) => {
 };
 
 const handleSuggestionClick = (s) => {
-    if(activeField === 'depart') setDepart(s.freeformAddress);
-    else setArrive(s.freeformAddress);
-
+    if(activeField === 'depart') setDepart(s);
+    else setArrive(s)
     setSuggestions([]);
     setQuery('')
 }
 
+const toggleDay = (day) => {
+    setSelectedDays(prev => 
+        prev.includes(day)
+        ? prev.filter(d => d !== day) : [...prev, day]
+    );
+}
     
 
     const handleSubmit = (e) => {
          e.preventDefault();
-        if(!depart || !arrive){
-            alert('please fill out both fields');
+        if(!depart || !arrive || !departureDate || departureTime || selectedDays === 0){
+            alert('please fill out all fields');
             return;
         }
        
-        OnLocationChange({depart, arrive, departureDate, departureTime});
+        OnCommuteSubmit({depart, arrive, departureDate, departureTime, days: selectedDays});
     }
 
 
@@ -123,10 +133,26 @@ const handleSuggestionClick = (s) => {
             placeholder='Enter time'
             value={departureTime}
             onChange={(e) => setDepartureTime(e.target.value)}
-            />
+            /> 
+          <div className="days">
+                <label>Repeat Every Week On:</label>
+                <div className="day-checkboxes">
+                    {weekdays.map((day) => (
+                        <label key={day}>
+                            <input
+                                type="checkbox"
+                                value={day}
+                                checked={selectedDays.includes(day)}
+                                onChange={() => toggleDay(day)}
+                            />
+                            {day}
+                        </label>
+                    ))}
+                </div>
+            </div>
             <button type='submit'>Enter</button>
         </form>
     );
 
 }
-export default LocationInput;
+export default CommuteForm;
